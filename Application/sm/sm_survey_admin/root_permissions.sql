@@ -1,0 +1,1 @@
+INSERT `user_passport` SELECT 'root', `link_id` FROM user_role_links WHERE role_id='1'
