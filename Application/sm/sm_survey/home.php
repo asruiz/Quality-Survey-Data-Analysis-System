@@ -31,7 +31,6 @@ while($row = $result->fetch_assoc())
 /* Checkbox */
 $dbh = cobalt_load_class('question_header');
 $result_checkbox = $dbh->execute_query('SELECT * FROM question_header where question_type = "Checkbox"')->result;
-// debug($dbh->query);
 $arr_result_checkbox = array();
 $counter_checkbox = 0;
 while($row_checkbox = $result_checkbox->fetch_assoc())
@@ -52,7 +51,6 @@ while($row_checkbox = $result_checkbox->fetch_assoc())
 /* Comments and Suggestion */
 $dbh = cobalt_load_class('question_header');
 $result_feedback = $dbh->execute_query('SELECT * FROM question_header where question_type = "Comments and Suggestion"')->result;
-// debug($dbh->query);
 
 $arr_result_feedback = array();
 $counter_feedback = 0;
@@ -71,12 +69,6 @@ while($row_feedback = $result_feedback->fetch_assoc())
 }
 /* End-Comments and Suggestion */
 
-// debug($arr_result_checkbox);
-// $question_header = $dbh->dump['question_header_description'];
-// debug($dbh->dump);
-// $html = cobalt_load_class('survey_header_html');
-// debug($arr_result[1]['questions']);
-
 if($_POST['btn_submit'])
 {
     $dbh = cobalt_load_class('survey_header');
@@ -84,19 +76,14 @@ if($_POST['btn_submit'])
     $radio_counter = 0;
     $radio_question_counter = 0;
     for ($a = 0; $a < count($arr_result); ++$a) {
-        // array_values($_POST['ratings']);
-        // debug($_POST['ratings'][$a]);
         if (isset($_POST['ratings'][$a])) {
-            // debug(is_array($_POST['ratings']));
             if (!is_array($_POST['ratings'])) {
                 ++$radio_counter;
             }
             else {
-                // debug($a);
                 $radio_counter += count($_POST['ratings'][$a]);
             }
         }
-        // debug($_POST['ratings']);
         if (!isset($arr_result[$a]['questions']) && $arr_result[$a]['is_active'] == 'Yes') {
             ++$radio_question_counter;
         }
@@ -106,19 +93,35 @@ if($_POST['btn_submit'])
         }
     }
 
-    // debug($radio_counter);
-    // debug($radio_question_counter);
-    // debug($_POST['ratings']);
-    // debug($arr_result);
+    $dbh_pre_reg_request_header =  cobalt_load_class('survey_header');
+    $dbh_pre_reg_request_header->execute_query("SELECT COUNT(survey_header_id) AS req_id FROM survey_header");
+
+  $result = $dbh_pre_reg_request_header->result;
+  $row = $result->fetch_assoc();
+
+  extract($row);
+
+
+  if($row == '')
+  {
+    $counter = 1;
+  }
+  else
+  {
+    $counter = ++$req_id;
+  }
+    $req_tag = 'SN';
+    $req_count = str_pad($counter, '5','0', STR_PAD_LEFT);
+    $code = "{$req_tag}".date('Y')."-{$req_count}";
+
     if ($radio_counter == $radio_question_counter) {
         $param = array(
             'branch_id' => '',
-            'survey_number' => 'Sample12313',
+            'survey_number' => $code,
             'room_number' => $_POST['room_number'],
             'date_submitted' => date('Y-m-d'),
-            // 'guest_first_name' => $_POST['guest_first_name'],
-            // 'guest_last_name' => $_POST['guest_last_name'],
-            'guest_name' => $_POST['guest_name'],
+            'guest_first_name' => $_POST['guest_first_name'],
+            'guest_last_name' => $_POST['guest_last_name'],
             'guest_age' => '',
             'guest_address' => '',
             'guest_check_in' => '',
@@ -127,17 +130,13 @@ if($_POST['btn_submit'])
             );
         $dbh->add($param);
         $survey_header_id = $dbh->auto_id;
-    // debug($survey_header_id);
-    // debug($arr_result);
-
-        $dbh = cobalt_load_class('survey_details');
+         $dbh = cobalt_load_class('survey_details');
 
         /* Ratings Submit */
         for($a = 0;$a <count($_POST['ratings']);++$a)
         {
             for($b = 0;$b<count($_POST['ratings'][$a]);++$b)
             {
-            // debug(count($_POST['ratings'][$a]));
                 if(isset($arr_result[$a]['questions'][$b]['question_details_id']))
                 {
                     $question_details_id = $arr_result[$a]['questions'][$b]['question_details_id'];
@@ -164,9 +163,6 @@ if($_POST['btn_submit'])
         {
             if(isset($_POST['checkbox'][$a]))
             {
-            // brpt();
-            // $arr_keys = array_keys($_POST['checkbox'][$a]); 
-            // debug($arr_keys);
                 for($j = 0;$j < count($arr_result_checkbox[$a]['questions']);++$j)
                 {
                     if(isset($_POST['checkbox'][$a][$j]))
@@ -178,8 +174,7 @@ if($_POST['btn_submit'])
                         $_POST['checkbox'][$a][$j] = "";
                     }
                 }  
-            // array_values($_POST['checkbox'][$a]);
-            // debug($_POST['checkbox']);
+
                 for($b = 0;$b<count($_POST['checkbox'][$a]);++$b)
                 {
                     if($_POST['checkbox'][$a][$b] != "")
@@ -201,13 +196,6 @@ if($_POST['btn_submit'])
         /* End-Checkbox Submit*/
 
         /* Comments and Suggestion*/
-    // for($a = 0;$a <count($arr_result_feedback[$a]['questions']);++$a)
-    // {
-    //     debug(count($_POST['ratings'][$a]));
-    //     if(isset($_POST['feedback'][$a]))
-    //     {
-            // $counter = count($arr_result_feedback);
-            // debug($counter);
         for($b = 0;$b<count($_POST['feedback']);++$b)
         {
             if($_POST['feedback'][$b] != "")
@@ -221,7 +209,6 @@ if($_POST['btn_submit'])
                  );
                 $dbh->add($parameters); 
             }
-
         }
     }
 
@@ -238,6 +225,47 @@ if($_POST['btn_submit'])
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/stylish-portfolio.css" rel="stylesheet">
     <link href="assets/css/taal-vista.css" rel="stylesheet">
+
+    <style>
+    #overlay 
+    {
+        position:fixed;
+        top:1px;
+        left:1px;
+        height:100%;
+        width:100%;
+        visibility:hidden;
+        background-color:rgba(255,255,255,.4);
+    }
+
+    .modal_content
+    {
+       height:300px;
+
+    }
+
+    .header
+    {
+        border-bottom-left-radius:0px;
+        border-bottom-right-radius:0px;
+    }
+
+    .container
+    {
+        border-bottom-left-radius:0px;
+        border-bottom-right-radius:0px;
+        border-top-left-radius:0px;
+        border-top-right-radius:0px;
+    }
+
+    .footer
+    {
+        border-top-left-radius:0px;
+        border-top-right-radius:0px;
+    }
+  
+    </style>
+
 </head>
 
 <body style="background-color: gold; background: url(assets/img/taal-vista.jpg); background-size: 100% 100%; background-attachment: fixed; background-repeat: no-repeat;">
@@ -245,25 +273,52 @@ if($_POST['btn_submit'])
 <div class="logbox">
 <img src="assets/img/logo.png">
 
+<?php
+require_once '../sm_survey_admin/core/subclasses/user_html.php';
+$html = new user_html;
+
+if($message != "")
+{
+    $html->draw_header();
+    $html->display_error($message);
+
+}
+
+?>
+
 <form method="POST" action="home.php">
     <!-- Table for Guest Information -->
-    <table>
+    <div id = "overlay">
+        <div class="logbox">
+            <div align="center">
+               <br/><img src = "assets/img/warning.png" style="width: 100px; height: 100px;"><br/>
+
+               <h2>Are you sure?</h2>
+
+               <input type="submit" class="btn btn-lg" style="background-color: #B48A00; color: white;" name="btn_submit"  value="Yes">
+               <span class="btn btn-lg" style="background-color: #B48A00; color: white;" onclick="hide_modal()">No</span>
+           </div>
+           <br/>
+       </div>
+   </div>
+    <br>
+    <table align="center">
         <tbody>
             <tr>
-                <?php echo '<td>Name: <input class="form-control" type="text" name="guest_name"></td>';?>
+                <?php echo '<td>First Name: <input class="form-control form-inline" type="text" name="guest_first_name"></td>';?>
+                <td> &nbsp; &nbsp; </td>
+                <?php echo '<td>Last Name: <input class="form-control form-inline" type="text" name="guest_last_name"></td>';?>
             </tr>
 
             <tr>
-                <?php echo '<td>Room Number: <input class="form-control" type="text" name="room_number"></td>';?>
+                <?php echo '<td>Room Number: <input class="form-control form-inline" type="text" name="room_number"></td>';?>
+                <td> &nbsp; &nbsp; </td>
+                <?php echo '<td>Check-out date: <input class="form-control form-inline" type="date" name="guest_check_out"></td>';?>
             </tr>
-
-            <tr>
-                <?php echo '<td>Check-out date: <input class="form-control" type="date" name="guest_check_out"></td>';?>
-            </tr>
-
         </tbody>
     </table>
 
+    <br/>
 
     <!-- Table for Scorecard -->
     <table class="table table-borderless" align="center">
@@ -293,11 +348,40 @@ if($_POST['btn_submit'])
                     {
                         echo '<td></td><td></td><td></td><td></td><td></td><tr>';
                         echo '<td style="font-style: italic;">'. $arr_result[$a]['questions'][$b]['question_details_description'].'</td>';
-                        echo '<td align="center"><input type="radio" name="ratings['.$a.']['.$b.']" value="5"></td>';
-                        echo '<td><input type="radio" name="ratings['.$a.']['.$b.']" value="4"></td>';
-                        echo '<td><input type="radio" name="ratings['.$a.']['.$b.']" value="3"></td>';
-                        echo '<td><input type="radio" name="ratings['.$a.']['.$b.']" value="2"></td>';
-                        echo '<td><input type="radio" name="ratings['.$a.']['.$b.']" value="1"></td>';
+                        echo '<td align="center"><input type="radio" name="ratings['.$a.']['.$b.']" value="5"';
+                        if(isset($_POST['ratings'][$a][$b]) && $_POST['ratings'][$a][$b] == '5')
+                        { 
+                            echo 'checked="checked"';
+                        }
+                        echo '></td>';
+
+                        echo '<td><input type="radio" name="ratings['.$a.']['.$b.']" value="4"';
+                        if(isset($_POST['ratings'][$a][$b]) && $_POST['ratings'][$a][$b] == '4')
+                        { 
+                            echo 'checked="checked"';
+                        }
+                        echo '></td>';
+
+                        echo '<td><input type="radio" name="ratings['.$a.']['.$b.']" value="3"';
+                        if(isset($_POST['ratings'][$a][$b]) && $_POST['ratings'][$a][$b] == '3')
+                        { 
+                            echo 'checked="checked"';
+                        }
+                        echo '></td>';
+
+                        echo '<td><input type="radio" name="ratings['.$a.']['.$b.']" value="2"';
+                        if(isset($_POST['ratings'][$a][$b]) && $_POST['ratings'][$a][$b] == '2')
+                        { 
+                            echo 'checked="checked"';
+                        }
+                        echo '></td>';
+
+                        echo '<td><input type="radio" name="ratings['.$a.']['.$b.']" value="1"';
+                        if(isset($_POST['ratings'][$a][$b]) && $_POST['ratings'][$a][$b] == '1')
+                        { 
+                            echo 'checked="checked"';
+                        }
+                        echo '></td>';
                         echo '</tr>';
 
                     } 
@@ -305,11 +389,40 @@ if($_POST['btn_submit'])
 
                 else
                 {
-                    echo '<td align="center"><input type="radio" name="ratings['.$a.']" value="5"></td>';
-                    echo '<td><input type="radio" name="ratings['.$a.']" value="4"></td>';
-                    echo '<td><input type="radio" name="ratings['.$a.']" value="3"></td>';
-                    echo '<td><input type="radio" name="ratings['.$a.']" value="2"></td>';
-                    echo '<td><input type="radio" name="ratings['.$a.']" value="1"></td>';
+                     echo '<td align="center"><input type="radio" name="ratings['.$a.']" value="5"';
+                        if(isset($_POST['ratings'][$a]) && $_POST['ratings'][$a] == '5')
+                        { 
+                            echo 'checked="checked"';
+                        }
+                        echo '></td>';
+
+                        echo '<td><input type="radio" name="ratings['.$a.']" value="4"';
+                        if(isset($_POST['ratings'][$a]) && $_POST['ratings'][$a] == '4')
+                        { 
+                            echo 'checked="checked"';
+                        }
+                        echo '></td>';
+
+                        echo '<td><input type="radio" name="ratings['.$a.']" value="3"';
+                        if(isset($_POST['ratings'][$a]) && $_POST['ratings'][$a]== '3')
+                        { 
+                            echo 'checked="checked"';
+                        }
+                        echo '></td>';
+
+                        echo '<td><input type="radio" name="ratings['.$a.']" value="2"';
+                        if(isset($_POST['ratings'][$a]) && $_POST['ratings'][$a] == '2')
+                        { 
+                            echo 'checked="checked"';
+                        }
+                        echo '></td>';
+
+                        echo '<td><input type="radio" name="ratings['.$a.']" value="1"';
+                        if(isset($_POST['ratings'][$a]) && $_POST['ratings'][$a] == '1')
+                        { 
+                            echo 'checked="checked"';
+                        }
+                        echo '></td>';
                     echo '</tr>';
                 }
                 ?>
@@ -336,8 +449,20 @@ if($_POST['btn_submit'])
                         // debug($arr_result);
                     for($d = 0;$d < count($arr_result_checkbox[$c]['questions']);++$d)
                     {
+                        if(isset($_POST['checkbox'][$c][$d]) && $_POST['checkbox'][$c][$d] == $arr_result_checkbox[$c]['questions'][$d]['question_details_description'])
+                        {
+                            $checked = 'checked = "checked"';
+                        }
+                        else
+                        {
+                            $checked = "";
+                        }
+
                         echo '<td></td><td></td><td></td><td></td><td></td><tr>';
-                        echo '<td> <input type="checkbox" name="checkbox['.$c.']['.$d.']" value="'.$arr_result_checkbox[$c]['questions'][$d]['question_details_description'].'">&nbsp;'. $arr_result_checkbox[$c]['questions'][$d]['question_details_description'].'</td>';
+                        echo '<td> <input type="checkbox" name="checkbox['.$c.']['.$d.']" 
+                        value="'.$arr_result_checkbox[$c]['questions'][$d]['question_details_description'].'" 
+                        '.$checked.'>
+                        &nbsp;'.$arr_result_checkbox[$c]['questions'][$d]['question_details_description'].'</td>';
                             // echo '<td style="font-style: italic;"></td>';
                         echo '</tr>';
 
@@ -366,13 +491,20 @@ if($_POST['btn_submit'])
                         for($f = 0;$f < count($arr_result_feedback[$e]['questions']);++$f)
                         {
                             echo '<tr>';
-
+                            if(isset($_POST['feedback'][$f]))
+                            {
+                                $textarea_value = $_POST['feedback'][$f]; 
+                            }
+                            else
+                            {
+                                $textarea_value = "";
+                            }
                             if($f == 2) {    
-                                echo '<td>&nbsp;'. $arr_result_feedback[$e]['questions'][$f]['question_details_description'].'<br/><textarea rows = "5" cols = "50" name="feedback['.$f.']" placeholder="Name of Staff"></textarea></td>';
+                                echo '<td>&nbsp;'. $arr_result_feedback[$e]['questions'][$f]['question_details_description'].'<br/><textarea rows = "5" cols = "50" name="feedback['.$f.']" placeholder="Name of Staff">'.$textarea_value.'</textarea></td>';
                             }
 
                             else {
-                                echo '<td>&nbsp;'. $arr_result_feedback[$e]['questions'][$f]['question_details_description'].'<br/><textarea rows = "5" cols = "50" name="feedback['.$f.']"></textarea></td>';
+                                echo '<td>&nbsp;'. $arr_result_feedback[$e]['questions'][$f]['question_details_description'].'<br/><textarea rows = "5" cols = "50" name="feedback['.$f.']">'.$textarea_value.'</textarea></td>';
                             }
                             
                             echo '</tr>';
@@ -383,15 +515,25 @@ if($_POST['btn_submit'])
             }        
             ?>         
         </tbody>
-    </table>  
-
-    <div align="center">
-        <input type="submit" class="btn btn-lg" name = "btn_submit" style="background-color: #B48A00; color: white;">
-        <!-- <a href="home.php" class="btn-lg" style="background-color: #B48A00; color: white;">Take Survey</a> -->
-    </div>
-
+    </table>    
 </form>
+<div align="center">
+    <button class="btn btn-lg" style="background-color: #B48A00; color: white;" onclick="show_modal()">Submit</button>
+    <br><br>
+</div>
 </div>
 
 </body>
+
+<script>
+    function show_modal()
+    {
+        document.getElementById("overlay").style.visibility = "visible";
+    }
+
+    function hide_modal()
+    {
+        document.getElementById("overlay").style.visibility = "hidden";
+    }
+</script>
 </html>

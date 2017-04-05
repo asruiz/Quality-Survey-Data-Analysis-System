@@ -28,3 +28,14 @@
 .table-borderless > thead > tr > th {
     border: none;
 }
+
+.overlay
+{
+    position:fixed;
+    top:1px;
+    left:1px;
+    height:100%;
+    width:100%;
+    z-index: 999;
+    background-color:rgba(25,29,255,.4);
+}
