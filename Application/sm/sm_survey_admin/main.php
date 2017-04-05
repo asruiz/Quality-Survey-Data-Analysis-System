@@ -3,6 +3,7 @@ require_once 'path.php';
 init_cobalt('ALLOW_ALL',FALSE);
 
 $html = new html;
+// $html->custom_header = 'custom_header.php';
 $html->draw_header('Welcome to your Control Center', $message, $message_type, FALSE);
 
 if(ENABLE_SIDEBAR)
@@ -70,6 +71,31 @@ if(is_array($menu_links))
     {
         $target_frame = 'target="content_frame"';
     }
+
+
+    echo '<fieldset class="container">';                    // Do not remove this line...
+
+    // START - NOT COBALT DEFAULT: This will render the graph section of the dashboard... 
+    echo '<fieldset class="top"><img src="images/cobalt/dashboard.png">Dashboard</fieldset>';
+    echo '<fieldset class="middle">';
+    echo '<div class="container_icons_CC">';
+    echo '<table width="100%">
+            <tr>
+                <td width="60%">
+                    <div id="chart_container" align="center" style="width:100%;">
+                        <canvas id="chart_canvas1"></canvas>
+                    </div>
+                </td>
+                <td width="40%">
+                    <div id="chart_container" align="center" style="width:100%;">
+                        <canvas id="chart_canvas2"></canvas>
+                    </div>
+                </td>
+            </tr>
+          </table>';
+    echo '</div>';
+    echo '</fieldset>';
+    // END - NOT COBALT DEFAULT: This will render the graph section of the dashboard... 
 
     echo '<fieldset class="container">';
     foreach($menu_links as $group => $link_info)

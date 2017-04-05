@@ -21,16 +21,17 @@ class survey_header extends data_abstraction
         if($this->stmt_template=='')
         {
             $this->set_query_type('INSERT');
-            $this->set_fields('survey_header_id, branch_id, survey_number, room_number, date_submitted, guest_name, guest_age, guest_address, guest_check_in, guest_check_out, include_in_mailing_list');
-            $this->set_values("?,?,?,?,?,?,?,?,?,?,?");
+            $this->set_fields('survey_header_id, branch_id, survey_number, room_number, date_submitted, guest_first_name, guest_last_name, guest_age, guest_address, guest_check_in, guest_check_out, include_in_mailing_list');
+            $this->set_values("?,?,?,?,?,?,?,?,?,?,?,?");
 
-            $bind_params = array('iisssssssss',
+            $bind_params = array('iissssssssss',
                                  &$this->fields['survey_header_id']['value'],
                                  &$this->fields['branch_id']['value'],
                                  &$this->fields['survey_number']['value'],
                                  &$this->fields['room_number']['value'],
                                  &$this->fields['date_submitted']['value'],
-                                 &$this->fields['guest_name']['value'],
+                                 &$this->fields['guest_first_name']['value'],
+                                 &$this->fields['guest_last_name']['value'],
                                  &$this->fields['guest_age']['value'],
                                  &$this->fields['guest_address']['value'],
                                  &$this->fields['guest_check_in']['value'],
@@ -51,15 +52,16 @@ class survey_header extends data_abstraction
         if($this->stmt_template=='')
         {
             $this->set_query_type('UPDATE');
-            $this->set_update("branch_id = ?, survey_number = ?, room_number = ?, date_submitted = ?, guest_name = ?, guest_age = ?, guest_address = ?, guest_check_in = ?, guest_check_out = ?, include_in_mailing_list = ?");
+            $this->set_update("branch_id = ?, survey_number = ?, room_number = ?, date_submitted = ?, guest_first_name = ?, guest_last_name = ?, guest_age = ?, guest_address = ?, guest_check_in = ?, guest_check_out = ?, include_in_mailing_list = ?");
             $this->set_where("survey_header_id = ?");
 
-            $bind_params = array('isssssssssi',
+            $bind_params = array('issssssssssi',
                                  &$this->fields['branch_id']['value'],
                                  &$this->fields['survey_number']['value'],
                                  &$this->fields['room_number']['value'],
                                  &$this->fields['date_submitted']['value'],
-                                 &$this->fields['guest_name']['value'],
+                                 &$this->fields['guest_first_name']['value'],
+                                 &$this->fields['guest_last_name']['value'],
                                  &$this->fields['guest_age']['value'],
                                  &$this->fields['guest_address']['value'],
                                  &$this->fields['guest_check_in']['value'],
