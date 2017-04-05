@@ -2,10 +2,10 @@
 
 require_once 'path.php';
 init_cobalt();
+init_var($_POST['btn_submit']);
 $show_report = FALSE;
 if($_POST['btn_submit'])
 {
-	// debug($_POST['month']);
 	$month = $_POST['month'];
 	$year = $_POST['year'];
 	$date = $year.'-'.$month;
@@ -27,7 +27,6 @@ if($_POST['btn_submit'])
 		LEFT JOIN `question_header` ON `question_header`.`question_header_id` = `survey_details`.`question_header_id`
 		LEFT JOIN question_details on `survey_details`.question_details_id = `question_details`.`question_details_id` 
 			where (`feedback` != "" AND `question_type` = "Comments and Suggestion") AND survey_details.survey_header_id ='.$survey_header_id.'')->result;
-		// debug($dbh->query);
 		while($rower = $resulter->fetch_assoc())
 		{
 			$arr_result_feedback[$counter]['questions'][] = $rower;
@@ -38,7 +37,6 @@ if($_POST['btn_submit'])
 	$show_report = TRUE;
 }
 
-// debug($arr_result_feedback);
 $html = cobalt_load_class('user_html');
 
 $html->draw_header('Reports');
@@ -54,8 +52,7 @@ for($a = 2017;$a < 2052;++$a)
 {
 	array_push($arr_year,$a);
 }
-// debug($arr_year);
-// $options = array
+
 $options = array('items' => $arr_year,
 				 'values' =>$arr_year);
 $html->draw_select_field($options, 'Year', $form_control_name='year', $draw_table_tags=TRUE, $extra='');
@@ -110,6 +107,4 @@ if($show_report)
 	$html->draw_fieldset_footer_end();
 	$html->draw_container_div_end();
 }
-
-
 ?>

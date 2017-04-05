@@ -18,7 +18,7 @@ var randomColor = function(opacity)
 //-------------------------------------------------------------------------------------------------
 // Process bar chart
 var xmlhttp1 = new XMLHttpRequest();
-// var url1 = "http://localhost/sm/sm_survey_admin/core/subclasses/chart_data.php?month=5&year=2016";
+var url1 = "http://localhost/sm/sm_survey_admin/modules/reports/graph_reports.php";
 
 
 xmlhttp1.onreadystatechange = function() 
@@ -83,7 +83,7 @@ xmlhttp1.onreadystatechange = function()
         }          
     }
 }    
-// xmlhttp1.open("GET", url1, true);
+xmlhttp1.open("POST", url1, true);
 xmlhttp1.send();
 
 
