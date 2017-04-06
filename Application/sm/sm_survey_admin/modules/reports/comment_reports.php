@@ -14,7 +14,7 @@ if($_POST['btn_submit'])
 		LEFT JOIN `survey_details` on `survey_header`.`survey_header_id` = `survey_details`.`survey_header_id` 
 		LEFT JOIN `question_header` ON `question_header`.`question_header_id` = `survey_details`.`question_header_id`
 		LEFT JOIN question_details on `question_details`.question_header_id = `question_header`.`question_header_id` 
-			where (`feedback` != "" AND `question_type` = "Comments and Suggestion") AND (date_submitted BETWEEN "'.$date.'-01" AND "'.$date.'-31") order by date_submitted, survey_header.survey_header_id DESC')->result;
+			where (`feedback` != "" AND `question_type` = "Comments and Suggestion") AND (guest_check_out BETWEEN "'.$date.'-01" AND "'.$date.'-31") order by guest_check_out, survey_header.survey_header_id DESC')->result;
 	$arr_result_feedback = array();
 
 	$counter = 0;

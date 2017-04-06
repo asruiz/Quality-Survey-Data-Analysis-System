@@ -48,15 +48,15 @@ if($_POST['btn_submit'] AND $_POST['questions'] != 0)
 	if($arr_questions['is_header'][$index] == 'Yes')
 	{
 
-		$query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (date_submitted BETWEEN "'.$date.'-01" AND "'.$date.'-31") ';	
+		$query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$date.'-01" AND "'.$date.'-31") ';	
 
-		$prev_query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (date_submitted BETWEEN "'.$prev_date.'-01" AND "'.$prev_date.'-31") ';	
+		$prev_query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$prev_date.'-01" AND "'.$prev_date.'-31") ';	
 	}
 	else
 	{
-		$query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_details_id ='.$_POST["questions"].' AND (date_submitted BETWEEN "'.$date.'-01" AND "'.$date.'-31") ';	
+		$query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_details_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$date.'-01" AND "'.$date.'-31") ';	
 
-		$prev_query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_details_id ='.$_POST["questions"].' AND (date_submitted BETWEEN "'.$prev_date.'-01" AND "'.$prev_date.'-31") ';	
+		$prev_query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_details_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$prev_date.'-01" AND "'.$prev_date.'-31") ';	
 	}
 
 	$dbh = cobalt_load_class('survey_header');
@@ -70,12 +70,12 @@ if($_POST['btn_submit'] AND $_POST['questions'] != 0)
 	$fair              = 0;
 	$poor              = 0;
 
-	//previous data
-	$excellent_counter_p = 0;
-	$very_good_counter_p = 0;
-	$good_counter_p      = 0;
-	$fair_p              = 0;
-	$poor_p              = 0;
+	// //previous data
+	// $excellent_counter_p = 0;
+	// $very_good_counter_p = 0;
+	// $good_counter_p      = 0;
+	// $fair_p              = 0;
+	// $poor_p              = 0;
 	while($row = $result->fetch_assoc())
 	{
 		if($row['points'] == 5)
@@ -184,13 +184,13 @@ if($show_report)
   function drawChart() {
     var oldData = google.visualization.arrayToDataTable([
       ['Name', 'Rating'],
-      ['Excellent', <?php echo $excellent_counter;?>]
+      ['Excellent', <?php echo $excellent_counter_p;?>]
 
     ]);
 
     var newData = google.visualization.arrayToDataTable([
       ['Name', 'Rating'],
-      ['Excellent', <?php echo $excellent_counter_p;?>],
+      ['Excellent', <?php echo $excellent_counter;?>],
     ]);
 
     var colChartDiff = new google.visualization.ColumnChart(document.getElementById('colchart_diff'));
@@ -205,10 +205,6 @@ if($show_report)
 <span id='colchart_diff' style='width: 450px; height: 250px; display: inline-block'></span>
 
 <?php
-
-	$html->draw_fieldset_body_end();
-	$html->draw_fieldset_footer_start();
-	$html->draw_submit_cancel();
-	$html->draw_fieldset_footer_end();
 	$html->draw_container_div_end();
+	echo '<br/>';
 }

@@ -36,9 +36,9 @@ if($_POST['btn_submit'] AND $_POST['questions'] != 0)
 	$index = array_search($_POST['questions'],$arr_questions['question_id']);
 
 
-	$query = 'SELECT *,count(question_details_id) as "counter" FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (date_submitted BETWEEN "'.$date.'-01" AND "'.$date.'-31") group by question_details_id';	
+	$query = 'SELECT *,count(question_details_id) as "counter" FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$date.'-01" AND "'.$date.'-31") group by question_details_id';	
 
-	$prev_query = 'SELECT *,count(question_details_id) as "counter" FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (date_submitted BETWEEN "'.$prev_date.'-01" AND "'.$prev_date.'-31") group by question_details_id';	
+	$prev_query = 'SELECT *,count(question_details_id) as "counter" FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$prev_date.'-01" AND "'.$prev_date.'-31") group by question_details_id';	
 	
 
 	$dbh = cobalt_load_class('survey_header');
@@ -126,27 +126,26 @@ if($show_report && count($arr_result) > 0 && count($arr_result_prev) > 0)
   <script type="text/javascript">
     google.charts.load('current', {packages:['corechart']});
     google.charts.setOnLoadCallback(drawChart);
-  function drawChart() {
-    var oldData = google.visualization.arrayToDataTable([
-      ['Name', 'Rating'],
- <?php
- 	for($a = 0; $a <count($arr_result); ++$a)
- 	{
- 		echo "['".$arr_result[$a]['feedback']."',".intval($arr_result[$a]['counter'])."],";
- 	}
- ?>
+    function drawChart() {
+    	var oldData = google.visualization.arrayToDataTable([
+    		['Name', 'Checkbox'],
+    		<?php
+    		for($a = 0; $a <count($arr_result_prev); ++$a)
+    		{
+    			echo "['".$arr_result_prev[$a]['feedback']."',".intval($arr_result_prev[$a]['counter'])."],";
+    		}
+    		?>
+    		]);
 
-    ]);
-
-    var newData = google.visualization.arrayToDataTable([
-      ['Name', 'Rating'],
- <?php
- 	for($a = 0; $a <count($arr_result_prev); ++$a)
- 	{
- 		echo "['".$arr_result_prev[$a]['feedback']."',".intval($arr_result_prev[$a]['counter'])."],";
- 	}
- ?>
-    ]);
+    	var newData = google.visualization.arrayToDataTable([
+    		['Name', 'Checkbox'],
+    		<?php
+    		for($a = 0; $a <count($arr_result); ++$a)
+    		{
+    			echo "['".$arr_result[$a]['feedback']."',".intval($arr_result[$a]['counter'])."],";
+    		}
+    		?>
+    		]);
 
     var colChartDiff = new google.visualization.PieChart(document.getElementById('colchart_diff'));
 
@@ -161,10 +160,6 @@ if($show_report && count($arr_result) > 0 && count($arr_result_prev) > 0)
 <span id='colchart_diff' style='width: 600px; height: 600px; display: inline-block'></span>
 
 <?php
-
-	$html->draw_fieldset_body_end();
-	$html->draw_fieldset_footer_start();
-	$html->draw_submit_cancel();
-	$html->draw_fieldset_footer_end();
 	$html->draw_container_div_end();
+	echo '<br/>';
 }
