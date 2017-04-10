@@ -43,8 +43,8 @@ $html->draw_header('Reports');
 $html->draw_container_div_start();
 $html->draw_fieldset_header('Comments');
 $html->draw_fieldset_body_start();
-$options = array('items'=>array('January','February','March','April'),
-				 'values'=>array('01','02','03','04'));
+$options = array('items'=>array('January','February','March','April','May','June','July','August','September','November','December'),
+				 'values'=>array('01','02','03','04','05','06','07','08','09','10','11','12'));
 $html->draw_select_field($options, 'Month', $form_control_name='month', $draw_table_tags=TRUE, $extra='');
 
 $arr_year = array();

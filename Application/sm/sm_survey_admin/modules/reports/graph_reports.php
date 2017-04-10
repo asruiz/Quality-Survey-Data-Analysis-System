@@ -21,7 +21,6 @@ $result = $dbh->execute_query("SELECT *, question_header.question_header_id as '
 $counter = 0;
 while($row = $result->fetch_assoc())
 {
-	$arr_validate_questions = array();
 	if(is_null($row['question_details_id']))
 	{
 		$data = explode('. ',$row['question_header_description']);
@@ -41,27 +40,40 @@ while($row = $result->fetch_assoc())
 
 if($_POST['btn_submit'] AND $_POST['questions'] != 0)
 {
-	$date = $_POST['year'].'-'.$_POST['month'];
-	$prev_date = ($_POST['year']-1).'-'.$_POST['month'];
+	if($_POST['year'] .'-'.$_POST['month'] == date('Y-m'))
+	{
+		$date_from = $_POST['year'].'-'.$_POST['month'].'-1';
+		$prev_date_from = ($_POST['year']-1).'-'.$_POST['month'].'-1';
+		$date_to = $_POST['year'].'-'.$_POST['month'].'-'.date('d');
+		$prev_date_to = ($_POST['year']-1).'-'.$_POST['month'].'-'.date('d');	
+	}
+	else
+	{
+		$date_from = $_POST['year'].'-'.$_POST['month'].'-1';
+		$prev_date_from = ($_POST['year']-1).'-'.$_POST['month'].'-1';
+		$date_to = $_POST['year'].'-'.$_POST['month'].'-31';
+		$prev_date_to = ($_POST['year']-1).'-'.$_POST['month'].'-31';
+	
+	}
 	$index = array_search($_POST['questions'],$arr_questions['question_id']);
 
 	if($arr_questions['is_header'][$index] == 'Yes')
 	{
 
-		$query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$date.'-01" AND "'.$date.'-31") ';	
+		$query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$date_from.'" AND "'.$date_to.'") ';	
 
-		$prev_query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$prev_date.'-01" AND "'.$prev_date.'-31") ';	
+		$prev_query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_header_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$prev_date_from.'" AND "'.$prev_date_to.'") ';	
 	}
 	else
 	{
-		$query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_details_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$date.'-01" AND "'.$date.'-31") ';	
+		$query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_details_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$date_from.'" AND "'.$date_to.'") ';	
 
-		$prev_query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_details_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$prev_date.'-01" AND "'.$prev_date.'-31") ';	
+		$prev_query = 'SELECT * FROM survey_details LEFT JOIN survey_header ON survey_details.survey_header_id = survey_header.survey_header_id WHERE question_details_id ='.$_POST["questions"].' AND (guest_check_out BETWEEN "'.$prev_date_from.'" AND "'.$prev_date_to.'") ';	
 	}
 
 	$dbh = cobalt_load_class('survey_header');
 	$result = $dbh->execute_query($query)->result;
-
+	// debug($dbh->query);
 	//present data
 	$arr_result = array();
 	$excellent_counter = 0;
@@ -103,7 +115,7 @@ if($_POST['btn_submit'] AND $_POST['questions'] != 0)
 
 	$dbh = cobalt_load_class('survey_header');
 	$result = $dbh->execute_query($prev_query)->result;
-
+	// debug($dbh->query);
 	//previous data
 	$excellent_counter_p = 0;
 	$very_good_counter_p = 0;
@@ -148,8 +160,8 @@ $options = array('items' => $arr_questions['question'],
 				 'values' =>$arr_questions['question_id']);
 echo '<table>';
 $html->draw_select_field($options, 'Questions', $form_control_name='questions', $draw_table_tags=TRUE, $extra='');
-$options = array('items'=>array('January','February','March','April'),
-				 'values'=>array('01','02','03','04'));
+$options = array('items'=>array('January','February','March','April','May','June','July','August','September','November','December'),
+				 'values'=>array('01','02','03','04','05','06','07','08','09','10','11','12'));
 $html->draw_select_field($options, 'Month', $form_control_name='month', $draw_table_tags=TRUE, $extra='');
 
 $arr_year = array();
