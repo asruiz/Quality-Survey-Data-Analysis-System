@@ -1,0 +1,32 @@
+.input {
+    width: 95%;
+    height: 50px;
+    display: block;
+    margin: 0 auto 15px;
+    padding: 0 15px;
+    border: none;
+    border-bottom: 2px solid #ebebeb;
+}
+.input:focus {
+    outline: none;
+    border-bottom-color: #B48A00 !important;
+}
+.input:hover {
+    border-bottom-color: #dcdcdc;
+}
+.input:invalid {
+    box-shadow: none;
+}
+
+textarea {
+   /* display: block;
+    margin: 0 auto 15px;
+    padding: 0 15px;*/
+    /*border: none;*/
+    border: 2px solid #ebebeb;
+    resize: none;
+}
+textarea:focus {
+    outline: none !important;
+    border:2px solid #B48A00;
+}
